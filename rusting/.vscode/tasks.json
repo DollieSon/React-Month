@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+    {
+        "label": "cargo build",
+        "dependsOn":[ "cargo build rusting"],
+    },
+    {
+        "label": "cargo build rusting",
+        "type": "shell",
+        "command": "cargo build",
+        "args": [],
+        "problemMatcher": ["$rustc"],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        }
+    }
+    ]
+}
