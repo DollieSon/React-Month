@@ -1,24 +1,31 @@
-pub struct TicTacToe {
+use crate::Player;
+
+pub struct TicTacToe<'a> {
     pub width: u32,
     pub height: u32,
     pub board: Vec<u8>,
+    pub players: &'a Vec<Player>,
 }
-
-impl TicTacToe {
-    pub fn new(h: u32, w: u32) -> TicTacToe {
+impl<'a> TicTacToe<'a> {
+    pub fn new(h: u32, w: u32, p: &'a Vec<Player>) -> TicTacToe<'a> {
         return TicTacToe {
             width: w,
             height: h,
             board: vec![0; (w * h) as usize],
+            players: p,
         };
     }
     pub fn show_board(&self) {
         for i in 0..=self.height - 1 {
             print!("{} \t:", i);
             for x in 0..=self.width - 1 {
-                let index = ((i * self.width) + x) as usize;
+                let player_index = self.board[((i * self.width) + x) as usize] as usize;
+                let mut alias: char = '#';
+                if let Some(player) = self.players.get(player_index) {
+                    alias = player.alias;
+                }
                 //print!("{} {} ||  ", self.board[index], index);
-                print!("{} ||  ", self.board[index]);
+                print!("{} | ", alias);
             }
             println!();
         }
