@@ -1,7 +1,7 @@
 mod board;
 
 use board::TicTacToe;
-use std::io::{self, stdin};
+use std::io::{self, stdin, Read};
 pub struct Player {
     pub name: String,
     pub alias: char,
@@ -9,7 +9,7 @@ pub struct Player {
 fn main() {
     let mut player_list: Vec<Player> = Vec::new();
     println!("Welcome to Ric-Rac-Roe");
-    print!("Enter Number of players: ");
+    println!("Enter Number of players: ");
     let mut str_buff = String::new();
     io::stdin()
         .read_line(&mut str_buff)
@@ -18,15 +18,16 @@ fn main() {
         Ok(num) => num,
         Err(_) => 0,
     };
-    for i in 0..=player_count {
+    for i in 0..=player_count - 1 {
         let mut str_buff = String::new();
         let mut player_name: String = String::new();
         let player_alias: char;
-        print!("Enter Player {i} Name: ");
+        println!("Enter Player {i} Name: ");
         io::stdin()
             .read_line(&mut player_name)
             .expect("Error Reading Player Name");
-        print!("Enter Player {player_name}Alias: ");
+        player_name = player_name.trim_end().to_string();
+        println!("Enter Player {player_name} sAlias: ");
         match io::stdin().read_line(&mut str_buff) {
             Ok(_) => {
                 let first = str_buff.chars().next();
@@ -46,7 +47,7 @@ fn main() {
     }
     let mut str_buffer = String::new();
     println!("Enter board dimension");
-    print!("Enter width: ");
+    println!("Enter width: ");
     io::stdin()
         .read_line(&mut str_buffer)
         .expect("Error Reading Line");
@@ -54,7 +55,8 @@ fn main() {
         Ok(num) => num,
         Err(_) => panic!("Input was not a number"),
     };
-    print!("Enter height");
+    println!("Enter height");
+    str_buffer.clear();
     io::stdin()
         .read_line(&mut str_buffer)
         .expect("Error Reading Line");
@@ -63,14 +65,39 @@ fn main() {
         Err(_) => panic!("Input was not a number"),
     };
 
+    let mut game: TicTacToe = TicTacToe::new(board_height, board_width, &player_list);
     'game_loop: loop {
-        let mut game: TicTacToe = TicTacToe::new(board_height, board_width, &player_list);
-        for (index, player) in player_list.iter().enumerate() {}
+        for (index, player) in player_list.iter().enumerate() {
+            //print turn
+            println!("{}'s turn : X--  Y| ", player.name);
+            let mut coords: Vec<u32>;
+            let mut temp_str: String = String::new();
+            // get coords
+            loop {
+                temp_str.clear();
+                match io::stdin().read_line(&mut temp_str) {
+                    Ok(_) => {}
+                    Err(_) => {
+                        continue;
+                    }
+                }
+                temp_str = temp_str.trim_end().to_string();
+                coords = temp_str
+                    .split(' ')
+                    .map(|str| str.parse::<u32>().unwrap())
+                    .collect::<Vec<u32>>();
+                if coords.len() != 2 {
+                    println!("Please Enter Two Coordinates");
+                    continue;
+                }
+                break;
+            }
+            // place mark
+            game.set_space(coords[0], coords[1], (index + 1) as u8);
+            // print board
+            game.show_board();
+            let winner: u8 = game.check_board();
+            println!("Winner {winner}");
+        }
     }
-    let mut something = TicTacToe::new(3, 3, &player_list);
-    something.set_space(0, 0, 10);
-    something.set_space(2, 2, 10);
-    something.set_space(1, 1, 10);
-    something.show_board();
-    something.check_board();
 }

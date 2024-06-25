@@ -1,3 +1,5 @@
+use std::io::{self, Write};
+
 use crate::Player;
 
 pub struct TicTacToe<'a> {
@@ -16,12 +18,20 @@ impl<'a> TicTacToe<'a> {
         };
     }
     pub fn show_board(&self) {
+        print!("  \t:");
+        for i in 0..=self.height - 1 {
+            print!("{i} | ");
+        }
+        print!("\n");
+        io::stdout().flush();
         for i in 0..=self.height - 1 {
             print!("{} \t:", i);
             for x in 0..=self.width - 1 {
                 let player_index = self.board[((i * self.width) + x) as usize] as usize;
-                let mut alias: char = '#';
-                if let Some(player) = self.players.get(player_index) {
+                let mut alias: char = 'E';
+                if player_index == 0 {
+                    alias = '#';
+                } else if let Some(player) = self.players.get(player_index - 1) {
                     alias = player.alias;
                 }
                 //print!("{} {} ||  ", self.board[index], index);
